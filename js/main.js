@@ -1,8 +1,6 @@
 import captureSetup from './captureSetup.js';
 import handler from './handler.js';
 
-const serverURL = 'http://127.0.0.1/';
-
 // Init encoder so we can call methods on it from global scope
 let encoder = null;
 
@@ -42,7 +40,7 @@ async function record() {
       formData.append('last', last);
       formData.append('title', video_title);
 
-      fetch(serverURL + 'upload.php', {
+      fetch('upload.php', {
         method: 'POST',
         body: formData,
       }).then((response) => {
