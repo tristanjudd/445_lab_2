@@ -9,7 +9,7 @@
   </head>
   <body>
     <div id="container">
-      <h2>VIDEO CAPTURE INTERFACE</h2>
+      <h2>VIDEO CAPTURE INTERFACE TEST</h2>
       <video id="videoCapture" autoplay="" controls>
         Your browser does not support video.
       </video>
