@@ -16,6 +16,7 @@ let recording = false;
 // RECORD function
 async function record() {
   if(recording) return;
+  stream = await captureSetup();
   let title_entered = document.getElementById("video_title").value;
   let video_title = title_entered.length > 0 ? title_entered : 'untitled';
 
@@ -40,7 +41,7 @@ async function record() {
       formData.append('last', last);
       formData.append('title', video_title);
 
-      fetch('upload.php', {
+      fetch('api/upload.php', {
         method: 'POST',
         body: formData,
       }).then((response) => {
