@@ -15,7 +15,7 @@
           $video_directory = dirname(__FILE__) . '/api/videos/';
           $videos = glob($video_directory . '*.mp4');
           foreach($videos as $video) {
-            echo '<li>' . basename($video) . '</li>';
+            echo '<li>' . basename($video, '.mp4') . '</li>';
           }
         ?>
       </ul>

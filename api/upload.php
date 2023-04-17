@@ -36,15 +36,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     sort($segmentFiles);
 
     // Generate a filename for the final MP4 file
-    $outputFilename =  $root_directory . '/videos/' . $video_title . '.mp4';
+    $outputFilename =  $root_directory . '/videos/' . $video_title;
+    $outputFileVideoName = $outputFilename . '.mp4';
+    $outputFileMPDName = $outputFilename . '/output.mpd';
 
     // Delete the previous video with the same filename
-    if(file_exists($outputFilename)) {
-      unlink($outputFilename);
+    if(file_exists($outputFileVideoName)) {
+      unlink($outputFileVideoName);
     }
 
     // Concatenate all video segments into a single MP4 file using ffmpeg
-    $cmd = 'ffmpeg -i "concat:' . implode('|', $segmentFiles) . '" -c copy ' . $outputFilename;
+    $cmd = 'ffmpeg -i "concat:' . implode('|', $segmentFiles) . '" -c copy ' . $outputFileVideoName;
+    exec($cmd);
+    $del_cmd = 'rm -r ' . $outputFilename;
+    exec($del_cmd);
+    mkdir($outputFilename, 0777, true);
+    $cmd = 'ffmpeg -i ' . $outputFileVideoName . 
+    ' -c:a copy -c:v libx264 -b:v:0 500k -b:v:1 1000k -b:v:2 2000k -profile:v baseline -level 3.0 -s:v:0 640x360 -s:v:1 1280x720 -f dash -init_seg_name \'init-$RepresentationID$.mp4\' -media_seg_name \'chunk-$RepresentationID$-$Number%05d$.m4s\' -segment_time 3 -use_template 0 '
+    . $outputFileMPDName;
     exec($cmd);
 
     // Delete the temporary video segments
