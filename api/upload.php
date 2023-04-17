@@ -58,9 +58,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $del_cmd = 'rm -r ' . $outputFilename;
     exec($del_cmd);
     make_directory($outputFilename);
+    /*
     $cmd = 'ffmpeg -i ' . $outputFileVideoName . 
     ' -c:a copy -c:v libx264 -b:v:0 500k -b:v:1 1000k -b:v:2 2000k -profile:v baseline -level 3.0 -s:v:0 640x360 -s:v:1 1280x720 -f dash -init_seg_name \'init-$RepresentationID$.mp4\' -media_seg_name \'chunk-$RepresentationID$-$Number%05d$.m4s\' -segment_time 3 -use_template 0 '
     . $outputFileMPDName;
+    */
+    $cmd = 'ffmpeg -i ' . $outputFileVideoName .
+    ' -an ' .
+    '-map 0:v:0 -c:v:0 libx264 -b:v:0 4000k -s:v:0 1280x720 ' .
+    '-map 0:v:0 -c:v:1 libx264 -b:v:1 2000k -s:v:1 854x480 ' .
+    '-map 0:v:0 -c:v:2 libx264 -b:v:2 1000k -s:v:2 640x360 ' .
+    '-map 0:v:0 -c:v:3 libx264 -b:v:3 700k -s:v:3 426x240 ' .
+    '-profile:v baseline -level 3.0 -f dash -init_seg_name \'init-$RepresentationID$.mp4\' ' .
+    '-media_seg_name \'chunk-$RepresentationID$-$Number%05d$.m4s\' -segment_time 3 -use_template 0 ' .
+    $outputFileMPDName;
+
     exec($cmd);
 
     // Delete the temporary video segments
