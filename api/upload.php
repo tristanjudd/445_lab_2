@@ -3,6 +3,12 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
+function make_directory($path) {
+  if (!file_exists($segment_directory)) {
+    mkdir($path, 0777, true);
+  }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   exit;
 }
@@ -10,11 +16,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $root_directory = dirname(__FILE__);
 
   $video_title =  $_POST['title'];
+
+  make_directory($root_directory . '/segments');
   $segment_directory = $root_directory . '/segments/' . $video_title . '/';
 
-  if (!file_exists($segment_directory)) {
-    mkdir($segment_directory, 0777, true);
-  }
+  make_directory($segment_directory);
   
   $filename = $segment_directory . $_FILES['segment']['name'] . '.webm';
 
@@ -36,6 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     sort($segmentFiles);
 
     // Generate a filename for the final MP4 file
+    make_directory($root_directory . '/videos');
     $outputFilename =  $root_directory . '/videos/' . $video_title;
     $outputFileVideoName = $outputFilename . '.mp4';
     $outputFileMPDName = $outputFilename . '/output.mpd';
@@ -50,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exec($cmd);
     $del_cmd = 'rm -r ' . $outputFilename;
     exec($del_cmd);
-    mkdir($outputFilename, 0777, true);
+    make_directory($outputFilename);
     $cmd = 'ffmpeg -i ' . $outputFileVideoName . 
     ' -c:a copy -c:v libx264 -b:v:0 500k -b:v:1 1000k -b:v:2 2000k -profile:v baseline -level 3.0 -s:v:0 640x360 -s:v:1 1280x720 -f dash -init_seg_name \'init-$RepresentationID$.mp4\' -media_seg_name \'chunk-$RepresentationID$-$Number%05d$.m4s\' -segment_time 3 -use_template 0 '
     . $outputFileMPDName;
