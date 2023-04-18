@@ -4,6 +4,8 @@ import handler from './handler.js';
 // Init encoder so we can call methods on it from global scope
 let encoder = null;
 
+const recBtn = document.querySelector('#record');
+
 // RECORD BUTTON LOGIC
 const recordButton = document.querySelector('#record');
 recordButton.addEventListener('click', record);
@@ -16,6 +18,11 @@ let recording = false;
 // RECORD function
 async function record() {
   if(recording) return;
+
+  // make button red and disable
+  recBtn.disabled = true;
+  recBtn.classList.add('redCircle');
+
   stream = await captureSetup();
   let title_entered = document.getElementById("video_title").value;
   let video_title = title_entered.length > 0 ? title_entered : 'untitled';
@@ -55,6 +62,9 @@ async function record() {
   stopButton.addEventListener('click', stop);
 
   async function stop() {
+    recBtn.classList.remove('redCircle');
+    recBtn.disabled = false;
+
     last = true;
     mediaRecorder.stop();
     recording = false;
