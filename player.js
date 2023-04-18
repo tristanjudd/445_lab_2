@@ -10,7 +10,7 @@ $(document).ready(function () {
 
     const fileName = localStorage.getItem('target');
 
-    let videoAddress = `http://labs445-2.encs.concordia.ca/~team34/api/videos/${fileName}/output.mpd`;
+    let videoAddress = `http://labs445-2.encs.concordia.ca/~team34/api/videos.php/${fileName}/output.mpd`;
 
     inputs[0].value = videoAddress;
 
