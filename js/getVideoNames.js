@@ -1,6 +1,6 @@
 const videoList = document.querySelector('#videos');
 
-const PATH_LOCATION = 'http://localhost:8000/videos.php';
+const PATH_LOCATION = './videos.php';
 
 fetch(PATH_LOCATION)
 .then(res => (
